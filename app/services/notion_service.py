@@ -43,10 +43,10 @@ def search_products(query: dict | None = None) -> list[dict]:
     filters: list[dict] = []
     if query:
         for field_name, value in query.items():
-            field_def = _find_field(field_name, CRM_PRODUCT_FIELDS)
+            field_def, real_name = _find_field(field_name, CRM_PRODUCT_FIELDS)
             if not field_def:
                 continue
-            notion_filter = _build_filter(field_name, value, field_def["type"])
+            notion_filter = _build_filter(real_name, value, field_def["type"])
             if notion_filter:
                 filters.append(notion_filter)
 
@@ -100,9 +100,9 @@ def create_lead(
     if extra_fields:
         from app.config import CRM_LEAD_EXTRA_FIELDS
         for field_name, value in extra_fields.items():
-            field_def = _find_field(field_name, CRM_LEAD_EXTRA_FIELDS)
+            field_def, real_name = _find_field(field_name, CRM_LEAD_EXTRA_FIELDS)
             if field_def and value:
-                props[field_name] = _build_property_value(value, field_def["type"])
+                props[real_name] = _build_property_value(value, field_def["type"])
 
     page = _post("/pages", {"parent": {"database_id": db_id}, "properties": props})
     return {"id": page["id"], "nombre": name}
@@ -267,11 +267,14 @@ def add_sample_products(db_id: str, products: list[dict], fields: list[dict]) ->
 
 # ── Helpers internos ──
 
-def _find_field(name: str, fields: list[dict]) -> dict | None:
+def _find_field(name: str, fields: list[dict]) -> tuple[dict | None, str | None]:
+    def norm(s: str) -> str:
+        return s.lower().replace(" ", "").replace("_", "").replace("-", "")
+    target = norm(name)
     for f in fields:
-        if f["name"] == name:
-            return f
-    return None
+        if f["name"] == name or norm(f["name"]) == target:
+            return f, f["name"]
+    return None, None
 
 
 def _build_filter(field_name: str, value, field_type: str) -> dict | None:

@@ -1,21 +1,24 @@
 import type { Metadata } from "next";
-import { Inter, Playfair_Display } from "next/font/google";
+import { Inter, Fraunces } from "next/font/google";
 import "./globals.css";
 import { agent, branding, business } from "@/lib/config";
 
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
+  display: "swap",
 });
 
-const playfair = Playfair_Display({
-  variable: "--font-playfair",
+const fraunces = Fraunces({
+  variable: "--font-fraunces",
   subsets: ["latin"],
+  axes: ["SOFT", "WONK", "opsz"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: `${agent.name} AI — ${branding.dashboardTitle}`,
-  description: `Panel de control del agente de voz para ${business.name}`,
+  title: `${branding.dashboardTitle} — ${agent.name}`,
+  description: `Panel de control para ${business.name}. Alta estética, odontología reconstructiva y cirugía maxilofacial.`,
 };
 
 export default function RootLayout({
@@ -26,10 +29,10 @@ export default function RootLayout({
   return (
     <html
       lang="es"
-      className={`${inter.variable} ${playfair.variable} dark h-full antialiased`}
+      className={`${inter.variable} ${fraunces.variable} h-full antialiased`}
     >
       <body
-        className="min-h-full flex flex-col font-sans bg-neutral-950 text-neutral-50"
+        className="min-h-full flex flex-col font-sans bg-background text-foreground"
         style={{ "--brand-color": branding.primaryColor } as React.CSSProperties}
       >
         {children}

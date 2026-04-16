@@ -1,34 +1,33 @@
 # ============================================
 # SOFIA.CONFIG.YAML
 # Configuracion de tu agente de voz con IA
-# Edita este archivo con los datos de tu cliente
 # ============================================
 
-version: "1.0"  # No tocar — para actualizaciones futuras
+version: "1.0"
 
 # --- DATOS DEL NEGOCIO ---
 business:
-  name: ""                               # Nombre del negocio (ej: "Clinica Dental Sonrie")
-  industry: ""                           # Opciones: inmobiliaria, dental, abogados, gimnasio, restaurante
-  timezone: "America/Mexico_City"        # Zona horaria (busca la tuya en: timezones.io)
-  phone: ""                              # Numero de telefono del negocio con codigo de pais (ej: +525512345678)
-  address: ""                            # Direccion fisica
-  website: ""                            # Sitio web (opcional)
-  hours: ""                              # Horario de atencion (ej: "Lunes a Viernes 9:00-18:00")
+  name: "Manila Dental"
+  industry: "dental"
+  timezone: "America/Bogota"
+  phone: ""
+  address: "Edificio Manila Center, Calle 12 #43E-22, El Poblado, Medellin, Colombia"
+  website: "http://maniladentalstudio.com/"
+  hours: "Lunes a Viernes 8:00-18:00, Sabados 8:00-12:00"
 
 # --- AGENTE DE VOZ ---
 agent:
-  name: "Sofia"                          # Nombre de la asistente virtual
-  voice_id: "11lab-shimmer"              # ID de voz (Retell te da opciones al crear el agente)
-  language: "es-MX"                      # Idioma: es-MX, es-CO, es-AR, en-US, etc.
-  personality: "amable, profesional"      # Como quieres que suene (maximo 3 palabras)
+  name: "Clara"
+  voice_id: "custom_voice_ed2c397a23e58b7c83e078372a"
+  language: "es-419"
+  personality: "amable, profesional"
 
 # --- LLAMADAS SALIENTES (OUTBOUND) ---
 outbound:
-  enabled: true                          # true = el agente hace llamadas de seguimiento
-  schedule: "09:00-17:00"               # Horario permitido para llamar
-  max_daily_calls: 20                    # Maximo de llamadas automaticas por dia
-  days:                                  # Dias activos para llamadas salientes
+  enabled: true
+  schedule: "09:00-17:00"
+  max_daily_calls: 20
+  days:
     - "lun"
     - "mar"
     - "mie"
@@ -36,15 +35,36 @@ outbound:
     - "vie"
 
 # --- CRM (Base de datos en Notion) ---
-# Estos campos se auto-configuran segun la industria que elijas.
-# Solo modificalos si quieres personalizar algo especifico.
 crm:
-  product_name: ""                       # Se llena automaticamente segun la industria
-  product_fields: []                     # Se llena automaticamente segun la industria
-  lead_extra_fields: []                  # Se llena automaticamente segun la industria
+  product_name: "Tratamientos"
+  product_fields:
+    - name: "Tratamiento"
+      type: "title"
+    - name: "Precio"
+      type: "number"
+      format: "dollar"
+    - name: "Duracion"
+      type: "rich_text"
+    - name: "Categoria"
+      type: "select"
+      options: ["Limpieza", "Ortodoncia", "Implantes", "Blanqueamiento", "Endodoncia", "Cirugia", "Estetica"]
+    - name: "Incluye"
+      type: "rich_text"
+  lead_extra_fields:
+    - name: "Tratamiento de interes"
+      type: "select"
+      options: ["Limpieza", "Ortodoncia", "Implantes", "Blanqueamiento", "Valoracion general", "Urgencia"]
+    - name: "Urgencia"
+      type: "select"
+      options: ["Urgente (dolor)", "Esta semana", "Este mes", "Solo explorando"]
+    - name: "Seguro dental"
+      type: "select"
+      options: ["Si", "No", "No se"]
+    - name: "Condicion medica"
+      type: "rich_text"
 
 # --- APARIENCIA DEL DASHBOARD ---
 branding:
-  primary_color: "#06b6d4"              # Color principal (usa cualquier color hex)
-  logo_text: ""                          # Texto que aparece como logo (ej: nombre corto del negocio)
-  dashboard_title: "Panel de Control"    # Titulo del dashboard
+  primary_color: "#1c1917"
+  logo_text: "MANILA"
+  dashboard_title: "Manila Dental"

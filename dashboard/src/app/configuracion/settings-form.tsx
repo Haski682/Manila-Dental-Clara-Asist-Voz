@@ -1,19 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
+import { Check, Radio } from "lucide-react";
 
 export function SettingsForm({
   agentName,
   businessName,
   industryName,
   language,
-  brandColor,
   initialGreeting,
   initialPrompt,
   initialTemperature,
@@ -23,7 +19,6 @@ export function SettingsForm({
   businessName: string;
   industryName: string;
   language: string;
-  brandColor: string;
   initialGreeting: string;
   initialPrompt: string;
   initialTemperature: number;
@@ -50,7 +45,10 @@ export function SettingsForm({
           modelTemperature: temperature,
         }),
       });
-      if (res.ok) setSaved(true);
+      if (res.ok) {
+        setSaved(true);
+        setTimeout(() => setSaved(false), 3000);
+      }
     } finally {
       setSaving(false);
     }
@@ -63,7 +61,9 @@ export function SettingsForm({
       const res = await fetch("/api/trigger-outbound", { method: "POST" });
       const data = await res.json();
       setOutboundStatus(
-        `${data.calls_made ?? 0} llamadas realizadas de ${data.leads_found ?? 0} leads pendientes`
+        `${data.calls_made ?? 0} llamadas realizadas de ${
+          data.leads_found ?? 0
+        } pendientes`
       );
     } catch {
       setOutboundStatus("Error al disparar el worker");
@@ -73,190 +73,218 @@ export function SettingsForm({
   }
 
   return (
-    <div className="space-y-6">
-      {/* Agent Info */}
-      <Card className="border-white/[0.06] bg-white/[0.02]">
-        <CardHeader>
-          <CardTitle className="font-heading text-lg italic">
-            Informacion del Agente
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="flex items-center gap-6">
-          <div
-            className="flex h-16 w-16 items-center justify-center rounded-2xl text-2xl font-bold text-black"
-            style={{ background: `linear-gradient(135deg, ${brandColor}, ${brandColor}dd)` }}
-          >
-            {agentName.charAt(0)}
-          </div>
-          <div>
-            <p className="font-heading text-xl font-semibold italic">
-              {agentName}
-            </p>
-            <p className="text-sm text-neutral-400">
-              Asistente virtual — {businessName}
-            </p>
-            <div className="flex gap-2 mt-2">
-              <Badge
-                variant="outline"
-                className="border-emerald-500/30 text-emerald-400 text-[10px]"
+    <div className="space-y-10 sm:space-y-14">
+      {/* Agent card */}
+      <section className="rounded-xl border border-border bg-card p-6 sm:p-8">
+        <div className="flex items-start justify-between gap-6 flex-wrap">
+          <div className="flex items-center gap-4 sm:gap-6">
+            <div className="flex h-12 w-12 sm:h-14 sm:w-14 shrink-0 items-center justify-center rounded-full bg-foreground text-background">
+              <span
+                className="font-heading text-[20px] sm:text-[22px]"
+                style={{ fontVariationSettings: '"opsz" 24' }}
               >
-                Activa
-              </Badge>
-              {model && (
-                <Badge
-                  variant="outline"
-                  className="border-neutral-600 text-neutral-400 text-[10px]"
-                >
-                  {model}
-                </Badge>
-              )}
-              <Badge
-                variant="outline"
-                className="border-neutral-600 text-neutral-400 text-[10px]"
+                {agentName.charAt(0)}
+              </span>
+            </div>
+            <div className="min-w-0">
+              <p
+                className="font-heading text-[24px] sm:text-[28px] leading-none text-foreground"
+                style={{
+                  fontVariationSettings: '"opsz" 48, "SOFT" 40',
+                  fontStyle: "italic",
+                }}
               >
-                {language}
-              </Badge>
-              <Badge
-                variant="outline"
-                className="border-neutral-600 text-neutral-400 text-[10px]"
-              >
-                {industryName}
-              </Badge>
+                {agentName}
+              </p>
+              <p className="mt-1.5 text-xs text-muted-foreground">
+                Recepción virtual de {businessName}
+              </p>
             </div>
           </div>
-        </CardContent>
-      </Card>
+          <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+            <StatusIndicator active />
+            <Meta>{industryName}</Meta>
+            <Meta>{language}</Meta>
+            {model && <Meta mono>{model}</Meta>}
+          </div>
+        </div>
+      </section>
 
       {/* Greeting */}
-      <Card className="border-white/[0.06] bg-white/[0.02]">
-        <CardHeader>
-          <CardTitle className="font-heading text-lg italic">
-            Saludo Inicial
-          </CardTitle>
-          <p className="text-xs text-neutral-500">
-            Lo primero que dice {agentName} al contestar una llamada
-          </p>
-        </CardHeader>
-        <CardContent>
-          <Textarea
-            value={greeting}
-            onChange={(e) => setGreeting(e.target.value)}
-            rows={3}
-            className="bg-white/[0.04] border-white/[0.08] text-sm resize-none"
-          />
-        </CardContent>
-      </Card>
+      <Block
+        eyebrow="Saludo inicial"
+        title="Primera frase al contestar"
+        description={`Lo primero que escucha el paciente cuando ${agentName} toma la llamada. Corta y clara funciona mejor.`}
+      >
+        <Textarea
+          value={greeting}
+          onChange={(e) => setGreeting(e.target.value)}
+          rows={3}
+          className="bg-background border-border text-sm resize-none leading-relaxed"
+        />
+      </Block>
 
       {/* Prompt */}
-      <Card className="border-white/[0.06] bg-white/[0.02]">
-        <CardHeader>
-          <CardTitle className="font-heading text-lg italic">
-            Personalidad y Comportamiento
-          </CardTitle>
-          <p className="text-xs text-neutral-500">
-            Las instrucciones que definen como se comporta {agentName} durante
-            las llamadas
-          </p>
-        </CardHeader>
-        <CardContent>
-          <Textarea
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
-            rows={16}
-            className="bg-white/[0.04] border-white/[0.08] text-sm font-mono resize-none leading-relaxed"
-          />
-        </CardContent>
-      </Card>
+      <Block
+        eyebrow="Personalidad"
+        title="Carácter del agente"
+        description={`Las instrucciones que definen cómo habla, qué información conoce y cómo responde ${agentName} durante la conversación.`}
+      >
+        <Textarea
+          value={prompt}
+          onChange={(e) => setPrompt(e.target.value)}
+          rows={18}
+          className="bg-background border-border text-sm font-mono resize-none leading-relaxed"
+        />
+      </Block>
 
       {/* Temperature */}
-      <Card className="border-white/[0.06] bg-white/[0.02]">
-        <CardHeader>
-          <CardTitle className="font-heading text-lg italic">
-            Creatividad
-          </CardTitle>
-          <p className="text-xs text-neutral-500">
-            Que tan creativa es {agentName} en sus respuestas (0 = muy precisa,
-            1 = muy creativa)
-          </p>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center gap-4">
-            <input
-              type="range"
-              min="0"
-              max="1"
-              step="0.1"
-              value={temperature}
-              onChange={(e) => setTemperature(parseFloat(e.target.value))}
-              className="flex-1"
-              style={{ accentColor: brandColor }}
-            />
-            <span
-              className="text-lg font-heading font-bold italic w-10 text-right"
-              style={{ color: brandColor }}
-            >
-              {temperature}
-            </span>
-          </div>
-          <div className="flex justify-between text-[10px] text-neutral-600 mt-1 px-1">
-            <span>Precisa</span>
-            <span>Creativa</span>
-          </div>
-        </CardContent>
-      </Card>
+      <Block
+        eyebrow="Tono"
+        title="Precisión versus creatividad"
+        description="Valores bajos hacen respuestas consistentes y predecibles. Valores altos las vuelven más conversacionales y naturales."
+      >
+        <div className="flex items-center gap-6">
+          <input
+            type="range"
+            min="0"
+            max="1"
+            step="0.05"
+            value={temperature}
+            onChange={(e) => setTemperature(parseFloat(e.target.value))}
+            className="flex-1 accent-foreground"
+          />
+          <span
+            className="font-heading text-[28px] leading-none text-foreground w-14 text-right tabular-nums"
+            style={{ fontVariationSettings: '"opsz" 36, "SOFT" 40' }}
+          >
+            {temperature.toFixed(2)}
+          </span>
+        </div>
+        <div className="flex justify-between text-[10px] uppercase tracking-[0.24em] text-muted-foreground mt-2">
+          <span>Precisa</span>
+          <span>Conversacional</span>
+        </div>
+      </Block>
 
-      {/* Save */}
-      <div className="flex items-center gap-4">
+      {/* Save button */}
+      <div className="flex items-center gap-5">
         <Button
           onClick={handleSave}
           disabled={saving}
-          className="bg-white text-black hover:bg-neutral-200 font-medium px-8"
+          className="bg-foreground text-background hover:bg-foreground/85 rounded-full px-8 h-11 text-sm tracking-wide uppercase [letter-spacing:0.14em]"
         >
-          {saving ? "Guardando..." : "Guardar Cambios"}
+          {saving ? "Guardando" : "Guardar cambios"}
         </Button>
         {saved && (
-          <span className="text-sm text-emerald-400">
-            Cambios guardados correctamente
+          <span className="inline-flex items-center gap-2 text-sm text-foreground/75">
+            <Check className="h-3.5 w-3.5" strokeWidth={2} />
+            Guardado
           </span>
         )}
       </div>
 
-      <Separator className="bg-white/[0.06]" />
+      <div className="hair-divider" />
 
       {/* Outbound trigger */}
-      <Card className="border-white/[0.06] bg-white/[0.02]">
-        <CardHeader>
-          <CardTitle className="font-heading text-lg italic">
-            Llamadas Outbound
-          </CardTitle>
-          <p className="text-xs text-neutral-500">
-            Dispara manualmente el worker que llama a los leads pendientes
-          </p>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center gap-4">
-            <Button
-              onClick={handleTriggerOutbound}
-              disabled={triggeringOutbound}
-              variant="outline"
-              className="hover:bg-white/[0.05]"
-              style={{
-                borderColor: `${brandColor}4d`,
-                color: brandColor,
-              }}
-            >
-              {triggeringOutbound
-                ? "Ejecutando..."
-                : "Disparar Llamadas Outbound"}
-            </Button>
-            {outboundStatus && (
-              <span className="text-sm text-neutral-400">
-                {outboundStatus}
-              </span>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+      <Block
+        eyebrow="Seguimiento"
+        title="Llamadas salientes manuales"
+        description={`${agentName} llama automáticamente cada hora a los pacientes pendientes. Si quieres adelantar ese ciclo, dispáralo manualmente.`}
+      >
+        <div className="flex items-center gap-5 flex-wrap">
+          <Button
+            onClick={handleTriggerOutbound}
+            disabled={triggeringOutbound}
+            variant="outline"
+            className="rounded-full px-7 h-11 text-sm tracking-wide uppercase [letter-spacing:0.14em] border-foreground/30 text-foreground hover:bg-accent"
+          >
+            <Radio className="h-4 w-4 mr-2" strokeWidth={1.5} />
+            {triggeringOutbound ? "Disparando" : "Disparar seguimientos"}
+          </Button>
+          {outboundStatus && (
+            <span className="text-sm text-muted-foreground">
+              {outboundStatus}
+            </span>
+          )}
+        </div>
+      </Block>
     </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+// Components
+// ─────────────────────────────────────────────────────────────
+
+function Block({
+  eyebrow,
+  title,
+  description,
+  children,
+}: {
+  eyebrow: string;
+  title: string;
+  description: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-6 lg:gap-12">
+      <div>
+        <p className="text-[10px] uppercase tracking-[0.32em] text-muted-foreground mb-3">
+          {eyebrow}
+        </p>
+        <h3
+          className="font-heading text-lg sm:text-xl text-foreground tracking-tight mb-3"
+          style={{ fontVariationSettings: '"opsz" 24, "SOFT" 40' }}
+        >
+          {title}
+        </h3>
+        <p className="text-[13px] leading-relaxed text-muted-foreground">
+          {description}
+        </p>
+      </div>
+      <div>{children}</div>
+    </section>
+  );
+}
+
+function StatusIndicator({ active }: { active: boolean }) {
+  return (
+    <span className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-3 py-1">
+      <span className="relative flex h-1.5 w-1.5">
+        <span
+          className={`absolute inset-0 rounded-full ${
+            active ? "bg-emerald-500/40 animate-ping" : ""
+          }`}
+        />
+        <span
+          className={`relative h-1.5 w-1.5 rounded-full ${
+            active ? "bg-emerald-600" : "bg-muted-foreground"
+          }`}
+        />
+      </span>
+      <span className="text-[10px] uppercase tracking-[0.24em] text-foreground/70">
+        {active ? "Activa" : "Pausada"}
+      </span>
+    </span>
+  );
+}
+
+function Meta({
+  children,
+  mono = false,
+}: {
+  children: React.ReactNode;
+  mono?: boolean;
+}) {
+  return (
+    <span
+      className={`text-[10px] uppercase tracking-[0.24em] text-muted-foreground ${
+        mono ? "font-mono" : ""
+      }`}
+    >
+      {children}
+    </span>
   );
 }

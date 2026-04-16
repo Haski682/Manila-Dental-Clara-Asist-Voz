@@ -9,15 +9,21 @@ from fastapi import FastAPI
 
 modal_app = modal.App("mega-sistema-ia")
 
-image = modal.Image.debian_slim(python_version="3.11").pip_install(
-    "retell-sdk>=5.0.0",
-    "twilio>=9.0.0",
-    "anthropic>=0.42.0",
-    "notion-client>=2.2.0,<3.0.0",
-    "requests>=2.32.0",
-    "python-dotenv>=1.0.0",
-    "pyyaml>=6.0.0",
-    "fastapi>=0.115.0",
+image = (
+    modal.Image.debian_slim(python_version="3.11")
+    .pip_install(
+        "retell-sdk>=5.0.0",
+        "twilio>=9.0.0",
+        "anthropic>=0.42.0",
+        "notion-client>=2.2.0,<3.0.0",
+        "requests>=2.32.0",
+        "python-dotenv>=1.0.0",
+        "pyyaml>=6.0.0",
+        "fastapi>=0.115.0",
+    )
+    .add_local_python_source("app")
+    .add_local_dir("prompts", remote_path="/root/prompts")
+    .add_local_file("sofia.config.yaml", remote_path="/root/sofia.config.yaml")
 )
 
 sofia_secret = modal.Secret.from_name("mega-sistema-credentials")
