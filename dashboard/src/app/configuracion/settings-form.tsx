@@ -114,7 +114,7 @@ export function SettingsForm({
       <Block
         eyebrow="Saludo inicial"
         title="Primera frase al contestar"
-        description={`Lo primero que escucha el paciente cuando ${agentName} toma la llamada. Corta y clara funciona mejor.`}
+        description={`Lo primero que escucha el cliente cuando ${agentName} toma la llamada. Corta y clara funciona mejor.`}
       >
         <Textarea
           value={greeting}
@@ -190,7 +190,7 @@ export function SettingsForm({
       <Block
         eyebrow="Seguimiento"
         title="Llamadas salientes manuales"
-        description={`${agentName} llama automáticamente cada hora a los pacientes pendientes. Si quieres adelantar ese ciclo, dispáralo manualmente.`}
+        description={`${agentName} llama automáticamente cada hora a los clientes pendientes. Si quieres adelantar ese ciclo, dispáralo manualmente.`}
       >
         <div className="flex items-center gap-5 flex-wrap">
           <Button

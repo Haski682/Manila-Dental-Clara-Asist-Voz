@@ -15,7 +15,7 @@ import yaml
 
 # Paths
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-CONFIG_PATH = PROJECT_ROOT / "sofia.config.yaml"
+CONFIG_PATH = PROJECT_ROOT / "daniela.config.yaml"
 ENV_PATH = PROJECT_ROOT / ".env"
 
 # Agregar al path
@@ -238,7 +238,7 @@ def setup_twilio(config: dict, retell_ids: dict) -> dict:
 
     # Crear SIP trunk
     trunk = client.trunking.v1.trunks.create(
-        friendly_name=f"Mega Sistema IA — {config['business']['name']}",
+        friendly_name=f"CALLIA ASISTENTE — {config['business']['name']}",
     )
 
     # Agregar origination URI de Retell
@@ -338,12 +338,12 @@ def update_env(notion_ids: dict, retell_ids: dict):
 def run_setup():
     """Ejecuta el setup completo."""
     print("=" * 50)
-    print("  MEGA SISTEMA IA — Setup Automatizado")
+    print("  CALLIA ASISTENTE — Setup Automatizado")
     print("=" * 50)
 
     # Cargar config
     if not CONFIG_PATH.exists():
-        print("❌ No se encontro sofia.config.yaml")
+        print("❌ No se encontro daniela.config.yaml")
         print("   Corre /setup para crearlo con la entrevista interactiva")
         sys.exit(1)
 
@@ -351,7 +351,7 @@ def run_setup():
     industry = config.get("business", {}).get("industry", "")
 
     if not industry:
-        print("❌ No se definio la industria en sofia.config.yaml")
+        print("❌ No se definio la industria en daniela.config.yaml")
         sys.exit(1)
 
     template = load_template(industry)

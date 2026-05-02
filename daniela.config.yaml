@@ -1,0 +1,49 @@
+# ============================================
+# DANIELA.CONFIG.YAML
+# Configuracion de tu agente de voz con IA — CALLIA ASISTENTE
+# Edita este archivo con los datos de tu cliente, o corre /setup
+# ============================================
+
+version: "1.0"
+
+# --- DATOS DEL NEGOCIO ---
+business:
+  name: ""                          # Nombre del negocio
+  industry: ""                       # inmobiliaria | dental | abogados | gimnasio | restaurante
+  timezone: "America/Mexico_City"
+  phone: ""
+  address: ""
+  website: ""
+  hours: ""
+
+# --- AGENTE DE VOZ ---
+agent:
+  name: "Daniela"
+  voice_id: ""                      # /setup lo asigna segun el idioma elegido
+  language: "es-MX"
+  personality: "amable, profesional"
+
+# --- LLAMADAS SALIENTES (OUTBOUND) ---
+outbound:
+  enabled: true
+  schedule: "09:00-17:00"
+  max_daily_calls: 20
+  days:
+    - "lun"
+    - "mar"
+    - "mie"
+    - "jue"
+    - "vie"
+
+# --- CRM (Base de datos en Notion) ---
+# Si dejas estos vacios, /setup carga los del template de la industria
+crm:
+  product_name: ""
+  product_fields: []
+  lead_extra_fields: []
+
+# --- APARIENCIA DEL DASHBOARD ---
+branding:
+  primary_color: "#06b6d4"
+  logo_text: "Daniela"
+  dashboard_title: "Panel de Control"

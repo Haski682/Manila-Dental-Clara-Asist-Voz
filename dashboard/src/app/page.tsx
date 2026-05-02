@@ -39,16 +39,17 @@ export default async function DashboardPage() {
           </span>
         </h1>
         <p className="mt-5 sm:mt-6 max-w-xl text-sm leading-relaxed text-muted-foreground">
-          {agent.name} atiende, agenda y acompaña a cada paciente de Manila
-          Dental con el cuidado de una consulta presencial. Aquí ves todo lo
-          que ocurre cuando tú no estás al teléfono.
+          {agent.name} atiende, agenda y acompaña a cada cliente
+          {business.name ? ` de ${business.name}` : ""} con el cuidado de una
+          conversación presencial. Aquí ves todo lo que ocurre cuando tú no
+          estás al teléfono.
         </p>
       </header>
 
       {/* KPI row */}
       <section className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-border rounded-xl overflow-hidden border border-border mb-12 sm:mb-14">
         <Kpi label="Llamadas" value={stats.totalCalls} sub="totales" />
-        <Kpi label="Pacientes" value={stats.totalLeads} sub="registrados" />
+        <Kpi label="Leads" value={stats.totalLeads} sub="registrados" />
         <Kpi
           label="Citas"
           value={stats.citasAgendadas}
@@ -84,7 +85,7 @@ export default async function DashboardPage() {
       {/* Funnel */}
       {Object.keys(stats.statusCounts).length > 0 && (
         <section className="mb-16">
-          <SectionTitle eyebrow="Pipeline" title="Estado de pacientes" />
+          <SectionTitle eyebrow="Pipeline" title="Estado de leads" />
           <div className="flex flex-wrap gap-2">
             {Object.entries(stats.statusCounts).map(([status, count]) => (
               <div

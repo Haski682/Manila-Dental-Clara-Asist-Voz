@@ -1,29 +1,27 @@
-# Mega Sistema IA — Agente de Voz para Cualquier Negocio
+# CALLIA ASISTENTE — Agente de Voz para Cualquier Negocio
 
-Este proyecto es una plantilla reutilizable para desplegar agentes de voz con IA.
-El alumno edita `sofia.config.yaml` con los datos del negocio y corre `/setup`.
+Plantilla reutilizable para desplegar agentes de voz con IA. Creado por **Haski**.
+El usuario edita `daniela.config.yaml` con los datos del negocio y corre `/setup`.
+
+El nombre por defecto de la asistente es **Daniela** — se puede cambiar en el config segun el negocio del cliente.
 
 ## Stack
 
-- **Backend**: Python + Modal (serverless)
+- **Backend**: Python + Modal (serverless) — app `callia-asistente`
 - **Agente de voz**: Retell AI (inbound + outbound)
 - **Telefonia**: Twilio (SIP trunk)
 - **CRM**: Notion (bases de datos automaticas)
 - **Citas**: Cal.com
 - **Analisis**: Claude Sonnet 4.5 (post-llamada)
-- **Dashboard**: Next.js + shadcn/ui (Fase 2)
+- **Dashboard**: Next.js + shadcn/ui
 
 ## Estructura clave
 
-- `sofia.config.yaml` — Configuracion del negocio (safe para git)
+- `daniela.config.yaml` — Configuracion del negocio (safe para git)
 - `.env` — Credenciales (NUNCA commitear)
 - `prompts/` — Templates por industria (inmobiliaria, dental, abogados, gimnasio, restaurante)
 - `app/` — Backend Python + Modal
 - `scripts/` — Scripts de setup, test, validacion
-
-## Convex
-
-When working on Convex code, **always read `convex/_generated/ai/guidelines.md` first**.
 
 ## Skills
 
@@ -41,16 +39,16 @@ Configura todo el sistema de agente de voz de principio a fin.
    - Industria (mostrar las 5 opciones: inmobiliaria, dental, abogados, gimnasio, restaurante)
    - Zona horaria
    - Direccion, horario, sitio web
-   - Nombre y personalidad del agente
+   - Nombre y personalidad del agente (default: Daniela)
    - Configuracion de outbound (si/no, horarios)
 
-2. Con las respuestas, genera/actualiza `sofia.config.yaml`
+2. Con las respuestas, genera/actualiza `daniela.config.yaml`
 
 3. Carga el template de prompts de la industria seleccionada desde `prompts/{industria}.yaml`
 
 4. Pide las credenciales una por una:
    - Para cada una: explica donde conseguirla con el link directo
-   - Si el alumno dice que no la tiene: guialo paso a paso para crearla
+   - Si el usuario dice que no la tiene: guialo paso a paso para crearla
    - Valida cada credencial en tiempo real (llama a la API para verificar)
    - Guarda en `.env`
 
@@ -61,7 +59,7 @@ Configura todo el sistema de agente de voz de principio a fin.
    d. Crear los agentes en Retell (inbound + outbound)
    e. Crear SIP trunk en Twilio
    f. Importar numero en Retell y asignar a los agentes
-   g. Desplegar backend en Modal
+   g. Desplegar backend en Modal (app: `callia-asistente`)
    h. Generar `.env.local` para el dashboard
 
 6. Muestra resumen final:
@@ -94,7 +92,7 @@ Correr despues de `/setup` o cuando algo deje de funcionar.
 
 **Flujo:**
 
-1. Lee `sofia.config.yaml` y `.env`
+1. Lee `daniela.config.yaml` y `.env`
 2. Verifica cada servicio:
 
 ```
@@ -108,7 +106,7 @@ Verificando sistema — [nombre del negocio]
 ```
 
 3. Para cada check:
-   - Si pasa: mostrar ✅ con detalle (ej: "Agente Ana activo, voz configurada")
+   - Si pasa: mostrar ✅ con detalle (ej: "Agente Daniela activo, voz configurada")
    - Si falla: mostrar ❌ con la solucion exacta (ej: "API key invalida → ve a retellai.com y copia tu key de nuevo")
 
 4. Resumen final:
@@ -139,7 +137,7 @@ Para hacer cambios despues del setup sin correr todo de nuevo.
 2. Segun la seleccion:
    - Muestra el valor actual
    - Pide el nuevo valor
-   - Actualiza `sofia.config.yaml` Y el servicio correspondiente (Retell, Notion, etc.)
+   - Actualiza `daniela.config.yaml` Y el servicio correspondiente (Retell, Notion, etc.)
    - Confirma el cambio
 
 3. Al final: sugiere correr `/test` para verificar que todo sigue funcionando
@@ -152,7 +150,7 @@ Muestra el estado actual de todos los servicios conectados.
 
 **Flujo:**
 
-1. Lee `sofia.config.yaml` y `.env`
+1. Lee `daniela.config.yaml` y `.env`
 2. Consulta cada servicio en tiempo real:
 
 ```

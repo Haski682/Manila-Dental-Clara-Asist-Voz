@@ -48,7 +48,7 @@
 }
 
 /* ==================================================================
-   Manila Dental — Luxury editorial palette
+   CALLIA — Luxury editorial palette
    bone white · cement gray · deep black · silver accents
    ================================================================== */
 
@@ -123,7 +123,7 @@
     letter-spacing: -0.01em;
   }
 
-  /* Wordmark — Manila-style capitalized display */
+  /* Wordmark — capitalized editorial display */
   .font-wordmark {
     font-family: var(--font-heading);
     font-optical-sizing: auto;

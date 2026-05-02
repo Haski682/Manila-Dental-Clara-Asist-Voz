@@ -22,7 +22,7 @@ export default async function ConfiguracionPage() {
         </h1>
         <p className="mt-5 max-w-xl text-sm leading-relaxed text-muted-foreground">
           Ajusta la voz, el carácter y el ritmo con el que {agent.name} atiende
-          a cada paciente. Los cambios que hagas aquí se aplican en tiempo real.
+          a cada cliente. Los cambios que hagas aquí se aplican en tiempo real.
         </p>
       </header>
 

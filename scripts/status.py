@@ -12,7 +12,7 @@ load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
 
 def load_config() -> dict:
-    config_path = Path(__file__).resolve().parent.parent / "sofia.config.yaml"
+    config_path = Path(__file__).resolve().parent.parent / "daniela.config.yaml"
     with open(config_path) as f:
         return yaml.safe_load(f)
 
@@ -27,7 +27,7 @@ def check_retell() -> tuple[str, str]:
         client = Retell(api_key=api_key)
         agents = client.agent.list()
         config = load_config()
-        agent_name = config.get("agent", {}).get("name", "Sofia")
+        agent_name = config.get("agent", {}).get("name", "Daniela")
         return "✅ Online", f"Agente: {agent_name} ({len(agents)} agentes)"
     except Exception as e:
         return "❌ Offline", str(e)
@@ -103,39 +103,58 @@ def check_notion() -> tuple[str, str]:
 
 
 def check_calcom() -> tuple[str, str]:
-    """Verifica Cal.com."""
+    """Verifica Cal.com via /v2/me y, si hay event_type_id, valida ese evento."""
     import requests
 
     api_key = os.environ.get("CAL_API_KEY", "")
+    event_type_id = os.environ.get("CAL_EVENT_TYPE_ID", "")
     if not api_key:
         return "❌ Offline", "API key no configurada"
 
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json",
+        "cal-api-version": "2024-08-13",
+    }
+
     try:
-        resp = requests.get(
-            "https://api.cal.com/v2/event-types",
-            headers={
-                "Authorization": f"Bearer {api_key}",
-                "Content-Type": "application/json",
-                "cal-api-version": "2024-08-13",
-            },
-        )
-        if resp.status_code == 200:
-            events = resp.json().get("data", [])
-            return "✅ Online", f"{len(events)} tipos de evento"
-        return "❌ Offline", f"Status {resp.status_code}"
+        me_resp = requests.get("https://api.cal.com/v2/me", headers=headers)
+        if me_resp.status_code != 200:
+            return "❌ Offline", f"Status {me_resp.status_code}"
+
+        if event_type_id:
+            et_resp = requests.get(
+                f"https://api.cal.com/v2/event-types/{event_type_id}",
+                headers={**headers, "cal-api-version": "2024-06-14"},
+            )
+            if et_resp.status_code == 200:
+                return "✅ Online", f"Evento #{event_type_id} disponible"
+            return "⚠️ Warning", f"Evento #{event_type_id} no encontrado"
+
+        return "✅ Online", "Conectado"
     except Exception as e:
         return "❌ Offline", str(e)
 
 
 def check_modal() -> tuple[str, str]:
-    """Verifica Modal."""
+    """Verifica Modal pegandole al endpoint /health del backend."""
+    import requests
+
+    url = os.environ.get("MODAL_HEALTH_URL", "")
+    if not url:
+        workspace = os.environ.get("MODAL_WORKSPACE", "haski-audiovisual")
+        app_name = os.environ.get("MODAL_APP_NAME", "callia-asistente")
+        url = f"https://{workspace}--{app_name}-api.modal.run/health"
+
     try:
-        result = os.popen("modal app list 2>&1").read()
-        if "mega-sistema-ia" in result:
-            return "✅ Online", "Backend desplegado"
-        return "⚠️ No deploy", "Corre: modal deploy app/main.py"
-    except Exception:
-        return "❌ Offline", "Modal CLI no instalado"
+        resp = requests.get(url, timeout=10)
+        if resp.status_code == 200:
+            data = resp.json() if resp.headers.get("content-type", "").startswith("application/json") else {}
+            version = data.get("version", "")
+            return "✅ Online", f"Backend respondiendo{f' (v{version})' if version else ''}"
+        return "⚠️ Warning", f"Backend status {resp.status_code}"
+    except requests.exceptions.RequestException as e:
+        return "❌ Offline", f"No alcanzable: {e}"
 
 
 def run_status():

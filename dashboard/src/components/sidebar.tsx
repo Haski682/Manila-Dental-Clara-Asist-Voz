@@ -13,21 +13,15 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const agentName = process.env.NEXT_PUBLIC_AGENT_NAME || "Clara";
-const logoText = process.env.NEXT_PUBLIC_LOGO_TEXT || "MANILA";
+const agentName = process.env.NEXT_PUBLIC_AGENT_NAME || "Daniela";
+const logoText = process.env.NEXT_PUBLIC_LOGO_TEXT || "Daniela";
 const businessName = process.env.NEXT_PUBLIC_BUSINESS_NAME || "";
 
 const nav = [
   { href: "/", label: "Analíticas", Icon: BarChart3 },
-  { href: "/leads", label: "Pacientes", Icon: Users },
+  { href: "/leads", label: "Leads", Icon: Users },
   { href: "/llamadas", label: "Llamadas", Icon: PhoneCall },
   { href: "/configuracion", label: "Configuración", Icon: Settings2 },
-];
-
-const specialties = [
-  "Alta estética",
-  "Odontología reconstructiva",
-  "Cirugía maxilofacial",
 ];
 
 export function Sidebar() {
@@ -69,9 +63,11 @@ export function Sidebar() {
           <span className="font-wordmark text-[16px] text-foreground leading-none">
             {logoText}
           </span>
-          <span className="mt-0.5 block text-[9px] uppercase tracking-[0.32em] text-muted-foreground">
-            Dental Studio
-          </span>
+          {businessName && (
+            <span className="mt-0.5 block text-[9px] uppercase tracking-[0.32em] text-muted-foreground">
+              {businessName}
+            </span>
+          )}
         </Link>
         <button
           type="button"
@@ -118,9 +114,11 @@ export function Sidebar() {
             <span className="font-wordmark text-[22px] text-foreground leading-none">
               {logoText}
             </span>
-            <span className="mt-1 block text-[10px] uppercase tracking-[0.32em] text-muted-foreground">
-              Dental Studio
-            </span>
+            {businessName && (
+              <span className="mt-1 block text-[10px] uppercase tracking-[0.32em] text-muted-foreground">
+                {businessName}
+              </span>
+            )}
           </Link>
         </div>
 
@@ -158,25 +156,6 @@ export function Sidebar() {
           })}
         </nav>
 
-        {/* Specialties (hidden on shorter drawers if needed) */}
-        <div className="px-8 pb-6 hidden sm:block">
-          <p className="text-[10px] uppercase tracking-[0.28em] text-muted-foreground mb-3">
-            Especialidades
-          </p>
-          <ul className="space-y-1.5">
-            {specialties.map((s) => (
-              <li
-                key={s}
-                className="flex items-center gap-2 text-[11px] text-foreground/70 font-heading"
-                style={{ fontVariationSettings: '"opsz" 12, "SOFT" 50' }}
-              >
-                <span className="h-0.5 w-3 bg-foreground/30" />
-                {s}
-              </li>
-            ))}
-          </ul>
-        </div>
-
         <div className="mx-8 hair-divider" />
 
         {/* Footer / Agent info */}
@@ -199,9 +178,11 @@ export function Sidebar() {
               </p>
             </div>
           </div>
-          <p className="mt-5 text-[9px] uppercase tracking-[0.24em] text-muted-foreground/70 truncate">
-            {businessName || "Dental Studio"}
-          </p>
+          {businessName && (
+            <p className="mt-5 text-[9px] uppercase tracking-[0.24em] text-muted-foreground/70 truncate">
+              {businessName}
+            </p>
+          )}
         </div>
       </aside>
     </>

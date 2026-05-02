@@ -1,13 +1,13 @@
 """Backend principal — Modal + FastAPI.
 
-Todos los endpoints son genericos: leen del sofia.config.yaml
+Todos los endpoints son genericos: leen del daniela.config.yaml
 y el template de la industria para adaptarse a cualquier negocio.
 """
 
 import modal
 from fastapi import FastAPI
 
-modal_app = modal.App("mega-sistema-ia")
+modal_app = modal.App("callia-asistente")
 
 image = (
     modal.Image.debian_slim(python_version="3.11")
@@ -23,12 +23,12 @@ image = (
     )
     .add_local_python_source("app")
     .add_local_dir("prompts", remote_path="/root/prompts")
-    .add_local_file("sofia.config.yaml", remote_path="/root/sofia.config.yaml")
+    .add_local_file("daniela.config.yaml", remote_path="/root/daniela.config.yaml")
 )
 
-sofia_secret = modal.Secret.from_name("mega-sistema-credentials")
+callia_secret = modal.Secret.from_name("callia-credentials")
 
-web_app = FastAPI(title="Mega Sistema IA")
+web_app = FastAPI(title="CALLIA ASISTENTE")
 
 
 @web_app.get("/health")
@@ -37,7 +37,7 @@ def health():
     return {
         "status": "ok",
         "business": BUSINESS.get("name", ""),
-        "agent": AGENT.get("name", "Sofia"),
+        "agent": AGENT.get("name", "Daniela"),
         "industry": BUSINESS.get("industry", ""),
         "version": "1.0.0",
     }
@@ -233,7 +233,7 @@ def trigger_outbound():
     return run_outbound_cycle()
 
 
-@modal_app.function(image=image, secrets=[sofia_secret])
+@modal_app.function(image=image, secrets=[callia_secret])
 @modal.asgi_app()
 def api():
     return web_app
@@ -243,7 +243,7 @@ def api():
 
 @modal_app.function(
     image=image,
-    secrets=[sofia_secret],
+    secrets=[callia_secret],
     schedule=modal.Cron("0 * * * *"),
     timeout=600,
 )

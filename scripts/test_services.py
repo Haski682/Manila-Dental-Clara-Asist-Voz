@@ -13,7 +13,7 @@ import yaml
 
 
 def load_config() -> dict:
-    config_path = Path(__file__).resolve().parent.parent / "sofia.config.yaml"
+    config_path = Path(__file__).resolve().parent.parent / "daniela.config.yaml"
     with open(config_path) as f:
         return yaml.safe_load(f)
 
@@ -45,7 +45,7 @@ def test_retell() -> tuple[bool, str]:
 
         # Buscar nombre del agente
         config = load_config()
-        agent_name = config.get("agent", {}).get("name", "Sofia")
+        agent_name = config.get("agent", {}).get("name", "Daniela")
         return True, f"Agente '{agent_name}' activo (inbound + outbound)"
 
     except Exception as e:
@@ -141,37 +141,42 @@ def test_calcom() -> tuple[bool, str]:
             "cal-api-version": "2024-08-13",
         }
 
-        resp = requests.get("https://api.cal.com/v2/event-types", headers=headers)
-        if resp.status_code != 200:
+        me_resp = requests.get("https://api.cal.com/v2/me", headers=headers)
+        if me_resp.status_code != 200:
             return False, "API key invalida — ve a app.cal.com/settings/developer/api-keys"
 
-        event_types = resp.json().get("data", [])
         if event_type_id:
-            found = any(str(et.get("id")) == str(event_type_id) for et in event_types)
-            if found:
+            et_resp = requests.get(
+                f"https://api.cal.com/v2/event-types/{event_type_id}",
+                headers={**headers, "cal-api-version": "2024-06-14"},
+            )
+            if et_resp.status_code == 200:
                 return True, f"Calendario conectado, evento tipo #{event_type_id} disponible"
             return False, f"Evento tipo #{event_type_id} no encontrado — verifica CAL_EVENT_TYPE_ID"
 
-        if event_types:
-            return True, f"Calendario conectado ({len(event_types)} tipos de evento)"
-        return False, "Calendario conectado pero sin tipos de evento — crea uno en Cal.com"
+        return True, "Calendario conectado (sin event_type_id configurado)"
 
     except Exception as e:
         return False, f"Error: {e}"
 
 
 def test_modal() -> tuple[bool, str]:
-    """Verifica que Modal esta configurado y el backend responde."""
+    """Verifica que Modal esta desplegado pegandole al endpoint /health."""
+    import requests
+
+    url = os.environ.get("MODAL_HEALTH_URL", "")
+    if not url:
+        workspace = os.environ.get("MODAL_WORKSPACE", "haski-audiovisual")
+        app_name = os.environ.get("MODAL_APP_NAME", "callia-asistente")
+        url = f"https://{workspace}--{app_name}-api.modal.run/health"
+
     try:
-        result = os.popen("modal app list 2>&1").read()
-        if "mega-sistema-ia" in result:
-            return True, "Backend desplegado en Modal"
-        elif "modal" in result.lower() or "error" not in result.lower():
-            return False, "Backend no desplegado — corre: modal deploy app/main.py"
-        else:
-            return False, "Modal CLI no configurado — corre: modal token new"
-    except Exception as e:
-        return False, f"Modal CLI no instalado — corre: pip install modal && modal token new"
+        resp = requests.get(url, timeout=10)
+        if resp.status_code == 200:
+            return True, f"Backend respondiendo en {url}"
+        return False, f"Backend no responde (status {resp.status_code}) — corre: modal deploy app/main.py::modal_app"
+    except requests.exceptions.RequestException as e:
+        return False, f"Backend no alcanzable en {url} — corre: modal deploy app/main.py::modal_app ({e})"
 
 
 def run_tests():

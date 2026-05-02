@@ -1,3 +1,4 @@
+
 # Credenciales — NUNCA subir a git
 .env
 .env.local

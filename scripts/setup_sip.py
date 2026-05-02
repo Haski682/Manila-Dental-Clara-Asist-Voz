@@ -2,7 +2,7 @@
 
 Pasos:
 1. Verifica que la cuenta de Twilio no sea trial (SIP trunking requiere upgrade)
-2. Crea SIP Trunk en Twilio (friendly_name="Manila Dental Clara")
+2. Crea SIP Trunk en Twilio (friendly_name desde el config)
 3. Genera username/password, crea Credential List, asocia al trunk
 4. Setea Termination URI (domain_name) - reintenta con sufijo si hay conflicto
 5. Asocia el phone number al trunk
@@ -15,6 +15,7 @@ import re
 import secrets
 import sys
 from pathlib import Path
+from unicodedata import normalize
 
 from dotenv import load_dotenv
 from retell import Retell
@@ -26,11 +27,24 @@ ENV_PATH = PROJECT_ROOT / ".env"
 sys.path.insert(0, str(PROJECT_ROOT))
 load_dotenv(ENV_PATH)
 
+from app.config import AGENT, BUSINESS  # noqa: E402
 
-SIP_USERNAME = "clara_manila"
+
+def _slug(text: str, max_len: int = 30) -> str:
+    """Convierte un nombre en slug seguro para SIP/DNS."""
+    s = normalize("NFKD", text).encode("ascii", "ignore").decode().lower()
+    s = re.sub(r"[^a-z0-9]+", "-", s).strip("-")
+    return s[:max_len] or "callia"
+
+
+_business_slug = _slug(BUSINESS.get("name", ""))
+_agent_slug = _slug(AGENT.get("name", "daniela"))
+
+SIP_USERNAME = f"{_agent_slug}_{_business_slug}" if _business_slug else _agent_slug
 SIP_PASSWORD = secrets.token_urlsafe(20)
-TRUNK_FRIENDLY = "Manila Dental Clara"
-DOMAIN_BASE = "manila-dental-clara"
+TRUNK_FRIENDLY = f"{BUSINESS.get('name', 'Callia')} {AGENT.get('name', 'Daniela')}".strip()
+DOMAIN_BASE = _slug(f"{_business_slug}-{_agent_slug}".strip("-")) or "callia-agent"
+CREDENTIAL_LIST_NAME = f"{BUSINESS.get('name', 'Callia')} Retell"
 
 
 def twilio_client() -> Client:
@@ -55,7 +69,7 @@ def create_or_get_trunk(client: Client):
 
 
 def set_domain_name(client: Client, trunk_sid: str) -> str:
-    for suffix in ["", "-mde", "-co", "-01", "-02"]:
+    for suffix in ["", "-01", "-02", "-03", "-04"]:
         domain = f"{DOMAIN_BASE}{suffix}.pstn.twilio.com"
         try:
             client.trunking.v1.trunks(trunk_sid).update(domain_name=domain)
@@ -70,10 +84,10 @@ def set_domain_name(client: Client, trunk_sid: str) -> str:
 
 def create_credential_list(client: Client) -> str:
     for cl in client.sip.credential_lists.list(limit=50):
-        if cl.friendly_name == "Manila Dental Retell":
+        if cl.friendly_name == CREDENTIAL_LIST_NAME:
             print(f"  Credential list ya existe: {cl.sid}")
             return cl.sid
-    cl = client.sip.credential_lists.create(friendly_name="Manila Dental Retell")
+    cl = client.sip.credential_lists.create(friendly_name=CREDENTIAL_LIST_NAME)
     client.sip.credential_lists(cl.sid).credentials.create(username=SIP_USERNAME, password=SIP_PASSWORD)
     print(f"  Credential list creada: {cl.sid}")
     return cl.sid
@@ -89,7 +103,6 @@ def attach_credentials_to_trunk(client: Client, trunk_sid: str, cl_sid: str):
 
 
 def attach_phone_to_trunk(client: Client, trunk_sid: str, phone: str):
-    # Buscar el IncomingPhoneNumber con ese numero
     numbers = client.incoming_phone_numbers.list(phone_number=phone)
     if not numbers:
         raise RuntimeError(f"No encontre el numero {phone} en tu cuenta Twilio")
@@ -105,11 +118,11 @@ def attach_phone_to_trunk(client: Client, trunk_sid: str, phone: str):
 
 def retell_import(phone: str, termination_uri: str, inbound_agent: str, outbound_agent: str):
     client = Retell(api_key=os.environ["RETELL_API_KEY"])
-    # Si ya existe, solo retorna
     for p in client.phone_number.list():
         if p.phone_number == phone:
             print(f"  Numero ya importado en Retell")
             return p
+    nickname = f"{BUSINESS.get('name', 'Callia')} - {AGENT.get('name', 'Daniela')}"
     imported = client.phone_number.import_(
         phone_number=phone,
         termination_uri=termination_uri,
@@ -117,19 +130,13 @@ def retell_import(phone: str, termination_uri: str, inbound_agent: str, outbound
         sip_trunk_auth_password=SIP_PASSWORD,
         inbound_agent_id=inbound_agent,
         outbound_agent_id=outbound_agent,
-        nickname="Manila Dental - Clara",
+        nickname=nickname,
     )
     print(f"  Numero importado en Retell")
     return imported
 
 
 def set_origination(client: Client, trunk_sid: str):
-    # Retell espera llamadas entrantes en un SIP URI especifico por region.
-    # Para numeros +1 US/CA, la region es us-west-2; el SIP URI es:
-    # sip:{e164}@5t4n6j0wnrl.sip.livekit.cloud
-    # Pero la forma soportada por Retell es configurar Twilio para que rutee
-    # a sip:{phone}@retell-custom-twilio.pstn.twilio.com
-    # OJO: El SIP URI exacto varia. Usamos el URI estandar de Retell:
     retell_sip = "sip:5t4n6j0wnrl.sip.livekit.cloud"
 
     existing = client.trunking.v1.trunks(trunk_sid).origination_urls.list()
@@ -168,8 +175,9 @@ def save_to_env(termination_uri: str):
 
 
 def main():
+    label = f"{BUSINESS.get('name', 'Callia')} ({AGENT.get('name', 'Daniela')})"
     print("=" * 50)
-    print("  SIP Trunk Setup - Manila Dental (Clara)")
+    print(f"  SIP Trunk Setup - {label}")
     print("=" * 50)
 
     phone = os.environ["TWILIO_PHONE_NUMBER"]
@@ -213,7 +221,7 @@ def main():
   Inbound agent:   {inbound_agent}
   Outbound agent:  {outbound_agent}
 
-  Siguiente: llama al numero {phone} para probar a Clara.
+  Siguiente: llama al numero {phone} para probar a {AGENT.get('name', 'Daniela')}.
 """)
 
 

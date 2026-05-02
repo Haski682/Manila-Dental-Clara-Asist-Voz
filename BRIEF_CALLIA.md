@@ -1,25 +1,23 @@
-# Brief: Mega Sistema IA — Version Comunidad
+# Brief: CALLIA ASISTENTE
+
+Creado por **Haski**.
 
 ## Contexto
 
-Sistema de agentes de voz con IA que ya funciona en produccion para una inmobiliaria (repo: `santmun/sofia-voice-agent`). Este repo (`mega-sistema-ia`) es la **plantilla reutilizable** para alumnos de Horizontes IA — llenan un archivo de configuracion, corren `/setup`, y en 5 minutos tienen un agente de voz funcionando para cualquier tipo de negocio.
+Sistema de agentes de voz con IA reutilizable: el usuario edita un archivo de configuracion, corre `/setup`, y en 5 minutos tiene un agente de voz funcionando para cualquier tipo de negocio.
 
 **Publico objetivo**: 80% no-dev. Profesionales que quieren vender este servicio a negocios locales. Necesitan ser guiados paso a paso — nada de asumir conocimiento tecnico.
 
-**Estrategia**: El repo de YouTube (`sofia-voice-agent`) ensena a construir desde cero (gratis). Este repo da el atajo + setup automatizado (producto de paga en comunidad Skool). No hay gatekeeping de tech, solo de negocio (ventas, contratos, pricing, prospeccion).
+## Que incluye
 
-## Lo que ya existe (repo base: `santmun/sofia-voice-agent`)
-
-- **Backend en Python + Modal** — 8 endpoints (search, create lead, book visit, update lead, post-call summary, webhooks, health, trigger outbound)
+- **Backend en Python + Modal** (app: `callia-asistente`) — 8 endpoints (search, create lead, book visit, update lead, post-call summary, webhooks, health, trigger outbound)
 - **Retell AI** — agente de voz (inbound + outbound con dynamic variables)
 - **Twilio** — telefonia via SIP trunk
-- **Notion** — CRM (3 bases de datos: propiedades, leads, historial de llamadas)
+- **Notion** — CRM (3 bases de datos: productos, leads, historial de llamadas)
 - **Cal.com** — agendar citas
 - **Claude Sonnet 4.5** — analisis post-llamada (resumen + lead scoring)
 - **Next.js + shadcn/ui** — dashboard con analiticas
 - **Worker outbound** — cron cada hora en Modal
-
-Todo desplegado y funcional. Numero: +16624938662 conectado via SIP trunk.
 
 ---
 
@@ -27,28 +25,28 @@ Todo desplegado y funcional. Numero: +16624938662 conectado via SIP trunk.
 
 ### Principio central: "Edita UN archivo, corre UN comando"
 
-El alumno no toca codigo. Todo se configura desde `sofia.config.yaml` (datos del negocio) y `.env` (credenciales). El sistema se adapta solo.
+El usuario no toca codigo. Todo se configura desde `daniela.config.yaml` (datos del negocio) y `.env` (credenciales). El sistema se adapta solo.
 
 ### Separacion config vs credenciales
 
 ```
-sofia.config.yaml  → Datos del negocio (safe para git)
-.env               → API keys y secrets (gitignored, NUNCA en el repo)
-.env.example       → Template con las variables necesarias y comentarios de ayuda
+daniela.config.yaml → Datos del negocio (safe para git)
+.env                → API keys y secrets (gitignored, NUNCA en el repo)
+.env.example        → Template con las variables necesarias y comentarios de ayuda
 ```
 
-**Por que separar**: Si un alumno hace `git push` por error, no expone las API keys de su cliente.
+**Por que separar**: Si haces `git push` por error, no expones las API keys de tu cliente.
 
 ---
 
-## 1. Archivo de configuracion: `sofia.config.yaml`
+## 1. Archivo de configuracion: `daniela.config.yaml`
 
 Un solo archivo con TODO lo especifico del negocio. Sin credenciales. Comentado para que un no-dev entienda cada campo.
 
 ```yaml
 # ============================================
-# SOFIA.CONFIG.YAML
-# Configuracion de tu agente de voz con IA
+# DANIELA.CONFIG.YAML
+# Configuracion de tu agente de voz con IA — CALLIA ASISTENTE
 # Edita este archivo con los datos de tu cliente
 # ============================================
 
@@ -66,7 +64,7 @@ business:
 
 # --- AGENTE DE VOZ ---
 agent:
-  name: "Ana"                            # Nombre de la asistente virtual
+  name: "Daniela"                        # Nombre de la asistente virtual (default)
   voice_id: "11lab-shimmer"              # ID de voz (Retell te da opciones)
   language: "es-MX"                      # Idioma: es-MX, es-CO, es-AR, en-US, etc.
   personality: "amable, profesional"      # Como quieres que suene (maximo 3 palabras)
@@ -122,36 +120,28 @@ branding:
 # ============================================
 
 # RETELL AI — Consigue tu key en: https://www.retellai.com/dashboard
-# Tutorial: [link al video de Santi explicando]
 RETELL_API_KEY=
 
 # TWILIO — Consigue tus datos en: https://console.twilio.com
-# Tutorial: [link al video]
 TWILIO_ACCOUNT_SID=
 TWILIO_AUTH_TOKEN=
 TWILIO_PHONE_NUMBER=
 
 # NOTION — Crea una integracion en: https://www.notion.so/my-integrations
-# Tutorial: [link al video]
 NOTION_API_KEY=
 NOTION_PARENT_PAGE_ID=
 
 # CAL.COM — Consigue tu key en: https://app.cal.com/settings/developer/api-keys
-# Tutorial: [link al video]
 CAL_API_KEY=
 CAL_EVENT_TYPE_ID=
 
 # ANTHROPIC (CLAUDE) — Consigue tu key en: https://console.anthropic.com
-# Tutorial: [link al video]
 ANTHROPIC_API_KEY=
 
 # MODAL — Se configura automaticamente con: modal token new
-# Tutorial: [link al video]
 ```
 
-Cada variable tiene:
-- Link directo a donde conseguirla
-- Referencia al video tutorial de Santi explicando el paso
+Cada variable tiene link directo a donde conseguirla.
 
 ---
 
@@ -167,7 +157,7 @@ Cada variable tiene:
 /setup
 
 Claude: "Vamos a configurar tu agente de voz. Te voy a hacer unas preguntas.
-         Si ya llenaste sofia.config.yaml, puedes correr /setup --skip-interview"
+         Si ya llenaste daniela.config.yaml, puedes correr /setup --skip-interview"
 
 1. "Como se llama el negocio de tu cliente?"
    → business.name
@@ -180,7 +170,7 @@ Claude: "Vamos a configurar tu agente de voz. Te voy a hacer unas preguntas.
 3. "En que zona horaria esta? (ejemplo: America/Mexico_City)"
    → business.timezone
 
-4. "Como quieres que se llame la asistente virtual? (ejemplo: Sofia, Ana, Maria)"
+4. "Como quieres que se llame la asistente virtual? (default: Daniela)"
    → agent.name
 
 5. "Como describirias la personalidad del agente en 3 palabras?"
@@ -201,14 +191,14 @@ Claude: "Vamos a configurar tu agente de voz. Te voy a hacer unas preguntas.
 
 **Setup automatizado (lo que corre internamente):**
 
-1. Lee/genera `sofia.config.yaml` con las respuestas
+1. Lee/genera `daniela.config.yaml` con las respuestas
 2. Valida TODAS las credenciales (llama a cada API para verificar)
 3. Carga el template de prompts de la industria seleccionada
 4. Crea las 3 bases de datos en Notion (productos, leads, llamadas) con los campos del config
 5. Crea el LLM y los Agentes en Retell (inbound + outbound)
 6. Configura el SIP trunk en Twilio y conecta el numero
 7. Importa el numero en Retell y lo asigna a los agentes
-8. Despliega el backend en Modal
+8. Despliega el backend en Modal (app: `callia-asistente`)
 9. Genera `.env.local` para el dashboard
 10. Muestra resumen final con todo lo configurado
 
@@ -216,14 +206,12 @@ Claude: "Vamos a configurar tu agente de voz. Te voy a hacer unas preguntas.
 
 ### `/test` — Verificacion post-setup
 
-Despues del setup, el alumno necesita SABER que todo funciona antes de conectar un cliente real.
-
 ```
 /test
 
 Claude: "Voy a verificar que todo este funcionando..."
 
-[1/5] Retell AI       ✅ Agente "Ana" activo, voz configurada
+[1/5] Retell AI       ✅ Agente "Daniela" activo, voz configurada
 [2/5] Twilio          ✅ Numero +525512345678 conectado via SIP
 [3/5] Notion CRM      ✅ 3 bases de datos creadas (Tratamientos, Leads, Llamadas)
 [4/5] Cal.com         ✅ Calendario conectado, evento tipo "Consulta" disponible
@@ -234,19 +222,9 @@ Resultado: 5/5 checks pasaron. Tu agente esta listo.
 Siguiente paso: Llama al numero para probarlo tu mismo.
 ```
 
-Si algo falla:
-```
-[3/5] Notion CRM      ❌ Error: API key invalida
-      → Solucion: Entra a notion.so/my-integrations, copia tu Internal Integration Secret,
-        y actualizalo en tu .env (variable NOTION_API_KEY)
-      → Luego corre /test otra vez
-```
-
 Mensajes de error claros con la solucion exacta. Nada de "Error 401 unauthorized" — sino "Tu API key de Notion no funciona, ve a este link y copiala de nuevo".
 
 ### `/customize` — Cambios post-setup
-
-Para modificaciones despues del setup inicial sin correr todo de nuevo.
 
 ```
 /customize
@@ -261,25 +239,23 @@ Claude: "Que quieres modificar?"
 
 → Seleccion: 1
 
-Claude: "Actualmente el agente Ana tiene este estilo: 'amable, profesional'
+Claude: "Actualmente el agente Daniela tiene este estilo: 'amable, profesional'
          Que quieres cambiar?"
 
 Usuario: "Quiero que sea mas casual y use el nombre del cliente"
 
-Claude: "Listo. Actualice el prompt en Retell y en sofia.config.yaml.
+Claude: "Listo. Actualice el prompt en Retell y en daniela.config.yaml.
          Corre /test para verificar que todo siga funcionando."
 ```
 
 ### `/status` — Estado de todos los servicios
-
-Para debugging cuando algo deja de funcionar.
 
 ```
 /status
 
 Estado del sistema — Clinica Dental Sonrie
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Retell AI        ✅ Online    Agente: Ana (inbound + outbound)
+Retell AI        ✅ Online    Agente: Daniela (inbound + outbound)
 Twilio           ✅ Online    Numero: +525512345678
 Notion CRM       ✅ Online    Leads: 47 | Llamadas: 123
 Cal.com          ✅ Online    Citas esta semana: 8
@@ -295,7 +271,7 @@ Ultima llamada: Hace 3 horas (Maria Lopez — agenda cita para manana)
 
 Directorio `prompts/` con templates completos. Cada archivo define todo lo que el agente necesita saber para esa industria.
 
-### Lanzamiento: 5 industrias
+### Industrias soportadas
 
 | Industria | Archivo | Producto | Accion principal |
 |-----------|---------|----------|-----------------|
@@ -400,25 +376,13 @@ post_call_analysis: |
   6. Siguiente accion recomendada
 ```
 
-### Futuras industrias (updates mensuales para Skool)
-
-Mes 1 post-lanzamiento:
-- `salon-belleza.yaml` — Servicios, estilistas, disponibilidad
-- `veterinaria.yaml` — Citas, vacunas, emergencias
-
-Mes 2:
-- `clinica.yaml` — Citas medicas, especialidades, seguros
-- `escuela.yaml` — Inscripciones, horarios, informes
-
-Cada nueva industria = contenido de retencion para la comunidad.
-
 ---
 
 ## 5. Estructura del repo
 
 ```
-mega-sistema-ia/
-├── sofia.config.yaml           # Datos del negocio (safe para git)
+callia-asistente/
+├── daniela.config.yaml         # Datos del negocio (safe para git)
 ├── .env.example                # Template de credenciales con links de ayuda
 ├── .env                        # Credenciales reales (GITIGNORED)
 ├── .gitignore                  # Ignora .env, node_modules, .modal/
@@ -430,55 +394,40 @@ mega-sistema-ia/
 │   ├── gimnasio.yaml           # Template gimnasio
 │   └── restaurante.yaml        # Template restaurante
 ├── app/                        # Backend Python + Modal (parametrizado)
-│   ├── main.py                 # Endpoints (lee de sofia.config.yaml)
-│   ├── notion_client.py        # Cliente Notion (campos dinamicos)
-│   ├── retell_client.py        # Cliente Retell (prompts dinamicos)
-│   ├── cal_client.py           # Cliente Cal.com
-│   ├── analysis.py             # Analisis post-llamada con Claude
-│   └── outbound_worker.py      # Worker de llamadas salientes
+│   ├── main.py                 # Endpoints (lee de daniela.config.yaml)
+│   ├── config.py               # Carga config + template
+│   ├── outbound_worker.py      # Worker de llamadas salientes
+│   ├── services/               # Clientes (Notion, Retell, Cal, Anthropic)
+│   └── webhooks/               # Handlers Retell + Twilio
 ├── scripts/
 │   ├── setup.py                # Setup automatizado (lo que /setup ejecuta)
-│   ├── test.py                 # Verificacion (lo que /test ejecuta)
+│   ├── finish_setup.py         # Setup Retell (SDK actual)
+│   ├── setup_sip.py            # SIP trunk Twilio ↔ Retell
+│   ├── wire_tools.py           # Conecta tools custom a los LLMs
+│   ├── optimize_latency.py     # Aplica Haiku + high_priority
+│   ├── status.py               # /status — estado de servicios
+│   ├── test_services.py        # /test — verificacion post-setup
+│   ├── customize.py            # /customize — cambios post-setup
 │   └── validate.py             # Validacion de credenciales
-├── dashboard/                  # Next.js + shadcn/ui (FASE 2)
-│   ├── next.config.js
-│   ├── tailwind.config.js      # Lee primary_color del config
+├── dashboard/                  # Next.js + shadcn/ui
+│   ├── next.config.ts
 │   └── src/
-│       ├── config/             # Lee sofia.config.yaml para labels y branding
-│       └── ...
-└── README.md                   # Guia paso a paso para alumnos
+│       └── lib/config.ts       # Lee daniela.config.yaml para labels y branding
+└── README.md                   # Guia paso a paso
 ```
-
----
-
-## 6. Prioridades de desarrollo
-
-### Fase 1 — Core (lo que importa)
-1. `sofia.config.yaml` con estructura completa y comentarios claros
-2. `.env.example` con links y tutoriales para cada credencial
-3. Templates de prompts para las 5 industrias
-4. Skill `/setup` con entrevista interactiva
-5. Skill `/test` con verificacion de todos los servicios
-6. Backend parametrizado que lee del config
-7. `README.md` con guia paso a paso
-
-### Fase 2 — Polish
-8. Skill `/customize` para cambios post-setup
-9. Skill `/status` para monitoreo
-10. Dashboard parametrizado (colores, labels, branding)
-
-### Fase 3 — Crecimiento
-11. Nuevas industrias (salon-belleza, veterinaria, clinica, escuela)
-12. Skill `/upgrade` para actualizar cuando sale nueva version del template
 
 ---
 
 ## Notas tecnicas
 
-- Repo base: `santmun/sofia-voice-agent` — clonar como punto de partida
-- Stack: Python + Modal (backend), Next.js + shadcn/ui (dashboard)
+- Stack: Python + Modal (backend, app `callia-asistente`), Next.js + shadcn/ui (dashboard)
+- Modal secret: `callia-credentials`
 - Todos los servicios tienen plan gratis para empezar
 - Dashboard: dark mode, tipografia premium (Playfair Display italic + Inter)
 - El config debe tener `version` para manejar migraciones futuras
 - Mensajes de error SIEMPRE con la solucion, nunca codigos tecnicos crudos
 - La entrevista del /setup es el default — el YAML manual es para power users
+
+---
+
+**Creado por Haski.**

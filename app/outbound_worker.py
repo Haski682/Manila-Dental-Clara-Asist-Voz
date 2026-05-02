@@ -16,7 +16,7 @@ def run_outbound_cycle() -> dict:
     from app.config import AGENT, OUTBOUND, CRM_LEAD_EXTRA_FIELDS
 
     max_calls = OUTBOUND.get("max_daily_calls", 20)
-    agent_name = AGENT.get("name", "Sofia")
+    agent_name = AGENT.get("name", "Daniela")
 
     leads = notion_service.get_pending_leads()
 

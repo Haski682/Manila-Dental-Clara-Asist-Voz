@@ -1,6 +1,6 @@
 """Configuracion central del sistema.
 
-Carga sofia.config.yaml (datos del negocio) + el template de la industria
+Carga daniela.config.yaml (datos del negocio) + el template de la industria
 + credenciales desde .env / variables de entorno.
 """
 
@@ -21,8 +21,8 @@ def _load_yaml(path: Path) -> dict:
         return yaml.safe_load(f) or {}
 
 
-# --- Sofia config (datos del negocio) ---
-_config = _load_yaml(PROJECT_ROOT / "sofia.config.yaml")
+# --- Config del negocio ---
+_config = _load_yaml(PROJECT_ROOT / "daniela.config.yaml")
 
 BUSINESS = _config.get("business", {})
 AGENT = _config.get("agent", {})
@@ -82,7 +82,7 @@ def get_post_call_prompt() -> str:
 def _replace_variables(text: str) -> str:
     """Reemplaza {agent.name}, {business.name}, etc. con valores del config."""
     replacements = {
-        "{agent.name}": AGENT.get("name", "Sofia"),
+        "{agent.name}": AGENT.get("name", "Daniela"),
         "{agent.personality}": AGENT.get("personality", "amable, profesional"),
         "{business.name}": BUSINESS.get("name", ""),
         "{business.address}": BUSINESS.get("address", ""),

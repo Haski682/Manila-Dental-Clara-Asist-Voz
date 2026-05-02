@@ -20,7 +20,7 @@ ENV_PATH = PROJECT_ROOT / ".env"
 sys.path.insert(0, str(PROJECT_ROOT))
 load_dotenv(ENV_PATH)
 
-from app.config import AGENT, BUSINESS, get_inbound_prompt, get_outbound_prompt
+from app.config import AGENT, BUSINESS, CRM_PRODUCT_NAME, get_inbound_prompt, get_outbound_prompt
 
 
 def find_notion_dbs() -> dict:
@@ -47,8 +47,9 @@ def find_notion_dbs() -> dict:
                 return did
         raise RuntimeError(f"No se encontro DB en Notion que empiece con '{prefix}'")
 
+    products_label = CRM_PRODUCT_NAME or "Productos"
     return {
-        "NOTION_PRODUCTS_DB_ID": find_one("Tratamientos"),
+        "NOTION_PRODUCTS_DB_ID": find_one(products_label),
         "NOTION_LEADS_DB_ID": find_one("Leads"),
         "NOTION_CALLS_DB_ID": find_one("Llamadas"),
     }
@@ -125,8 +126,9 @@ def update_env(additions: dict):
 
 
 def main():
+    label = f"{BUSINESS.get('name', 'Callia')} ({AGENT.get('name', 'Daniela')})"
     print("=" * 50)
-    print("  Finish Setup - Manila Dental (Clara)")
+    print(f"  Finish Setup - {label}")
     print("=" * 50)
 
     print("\n[1/3] Buscando DBs de Notion...")

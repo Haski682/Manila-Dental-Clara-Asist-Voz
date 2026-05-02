@@ -1,7 +1,10 @@
 [project]
-name = "mega-sistema-ia"
+name = "callia-asistente"
 version = "1.0.0"
-description = "AI voice agent template for any business — powered by Retell AI, Modal, and Twilio"
+description = "CALLIA ASISTENTE — Agente de voz con IA para cualquier negocio (Retell + Modal + Twilio + Notion + Cal.com)"
+authors = [
+    { name = "Haski" },
+]
 requires-python = ">=3.11"
 dependencies = [
     "modal>=0.73.0",

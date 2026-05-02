@@ -49,7 +49,7 @@ def process_post_call(call_id: str) -> dict:
     """
     from app.config import AGENT
 
-    agent_name = AGENT.get("name", "Sofia")
+    agent_name = AGENT.get("name", "Daniela")
 
     # 1. Obtener datos de la llamada
     call_data = retell_service.get_call(call_id)

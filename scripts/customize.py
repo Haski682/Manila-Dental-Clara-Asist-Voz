@@ -1,7 +1,7 @@
 """Customize — aplica cambios puntuales post-setup.
 
 Modifica un aspecto especifico del sistema sin correr todo el setup de nuevo.
-Actualiza tanto el servicio (Retell, Notion) como sofia.config.yaml.
+Actualiza tanto el servicio (Retell, Notion) como daniela.config.yaml.
 """
 
 import os
@@ -11,7 +11,7 @@ from pathlib import Path
 import yaml
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-CONFIG_PATH = PROJECT_ROOT / "sofia.config.yaml"
+CONFIG_PATH = PROJECT_ROOT / "daniela.config.yaml"
 
 sys.path.insert(0, str(PROJECT_ROOT))
 from dotenv import load_dotenv
@@ -107,7 +107,7 @@ def show_menu():
     """Muestra el menu interactivo de customize."""
     config = load_config()
     business_name = config.get("business", {}).get("name", "tu negocio")
-    agent_name = config.get("agent", {}).get("name", "Sofia")
+    agent_name = config.get("agent", {}).get("name", "Daniela")
 
     print(f"\n🔧 Personalizar — {business_name}")
     print("=" * 40)

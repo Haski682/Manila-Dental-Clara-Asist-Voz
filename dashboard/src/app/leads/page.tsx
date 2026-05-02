@@ -25,14 +25,14 @@ export default async function LeadsPage() {
     <Shell>
       <header className="mb-10 sm:mb-12">
         <p className="text-[10px] uppercase tracking-[0.32em] text-muted-foreground mb-4">
-          Base de pacientes
+          Base de leads
         </p>
         <div className="flex items-end justify-between gap-6 flex-wrap">
           <h1
             className="font-heading text-[36px] sm:text-[42px] md:text-[48px] leading-[0.95] tracking-tight text-foreground"
             style={{ fontVariationSettings: '"opsz" 144, "SOFT" 30' }}
           >
-            Pacientes
+            Leads
           </h1>
           <div className="text-right">
             <p
@@ -54,7 +54,7 @@ export default async function LeadsPage() {
       {/* Desktop table */}
       <div className="hidden md:block rounded-xl border border-border bg-card overflow-hidden">
         <div className="grid grid-cols-[2fr_1.4fr_1.2fr_0.8fr_1.2fr_0.6fr] gap-4 px-6 py-4 border-b border-border bg-muted/40">
-          <HeaderCell>Paciente</HeaderCell>
+          <HeaderCell>Lead</HeaderCell>
           <HeaderCell>Teléfono</HeaderCell>
           <HeaderCell>Estatus</HeaderCell>
           <HeaderCell>Temp.</HeaderCell>
@@ -107,7 +107,7 @@ export default async function LeadsPage() {
           {leads.length === 0 && (
             <div className="py-20 text-center">
               <p className="text-sm text-muted-foreground">
-                Aún no hay pacientes registrados.
+                Aún no hay leads registrados.
               </p>
             </div>
           )}
@@ -173,7 +173,7 @@ export default async function LeadsPage() {
         {leads.length === 0 && (
           <div className="rounded-xl border border-border bg-card py-16 text-center">
             <p className="text-sm text-muted-foreground">
-              Aún no hay pacientes registrados.
+              Aún no hay leads registrados.
             </p>
           </div>
         )}

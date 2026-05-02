@@ -1,8 +1,8 @@
-# Mega Sistema IA — Tu Agente de Voz con IA en 5 Minutos
+# CALLIA ASISTENTE — Tu Agente de Voz con IA en 5 Minutos
 
 Sistema completo de agente de voz con inteligencia artificial que atiende llamadas, agenda citas y llena tu CRM automaticamente. Funciona para cualquier tipo de negocio.
 
-**Creado por Santiago Munoz** — [Horizontes IA](https://iahorizontesacademy.com)
+**Creado por Haski**
 
 ---
 
@@ -14,6 +14,8 @@ Sistema completo de agente de voz con inteligencia artificial que atiende llamad
 4. **Guarda leads** en tu CRM (Notion) con toda la informacion
 5. **Hace llamadas de seguimiento** a prospectos interesados
 6. **Analiza cada llamada** y te da un resumen con puntuacion del lead
+
+El nombre por defecto de la asistente es **Daniela**, pero podes cambiarlo en `daniela.config.yaml` segun el negocio del cliente.
 
 ---
 
@@ -48,11 +50,11 @@ Necesitas cuentas en estos servicios (todos tienen plan gratis para empezar):
 
 ## Instalacion paso a paso
 
-### Paso 1: Clona el repositorio
+### Paso 1: Cloná el repositorio
 
 ```bash
-git clone https://github.com/santmun/mega-sistema-ia.git
-cd mega-sistema-ia
+git clone <repo-url> callia-asistente
+cd callia-asistente
 ```
 
 ### Paso 2: Crea el tipo de evento en Cal.com (OBLIGATORIO)
@@ -103,8 +105,8 @@ Llama al numero de telefono que configuraste. Tu agente virtual va a contestar.
 ## Estructura del proyecto
 
 ```
-mega-sistema-ia/
-├── sofia.config.yaml        ← Edita este archivo con los datos del negocio
+callia-asistente/
+├── daniela.config.yaml      ← Edita este archivo con los datos del negocio
 ├── .env                     ← Tus credenciales (NUNCA subir a git)
 ├── .env.example             ← Template de referencia para las credenciales
 ├── prompts/                 ← Prompts por industria (no necesitas tocarlos)
@@ -162,12 +164,10 @@ Si. Usa cualquier template como base y modifica los prompts y campos del CRM con
 Corre `/status` para ver que servicio esta fallando, y `/test` para diagnosticar el problema.
 
 **Puedo tener multiples agentes para diferentes clientes?**
-Si. Clona el repo para cada cliente con su propio `sofia.config.yaml` y `.env`.
+Si. Cloná el repo para cada cliente con su propio `daniela.config.yaml` y `.env`. Cambiá el `agent.name` para personalizar el nombre de la asistente.
 
 ---
 
-## Soporte
+## Creditos
 
-- **Comunidad Skool**: [Horizontes IA](https://iahorizontesacademy.com)
-- **YouTube**: Tutoriales paso a paso en el canal de Horizontes IA
-- **Creado por**: Santiago Munoz (@santmun)
+**Creado por Haski.**

@@ -1,6 +1,6 @@
 /**
  * Server-side config loader.
- * Reads sofia.config.yaml and the industry template at build/request time.
+ * Reads daniela.config.yaml and the industry template at build/request time.
  */
 
 import fs from "fs";
@@ -18,7 +18,7 @@ function loadYaml(filePath: string): Record<string, any> {
   }
 }
 
-const config = loadYaml(path.join(PROJECT_ROOT, "sofia.config.yaml"));
+const config = loadYaml(path.join(PROJECT_ROOT, "daniela.config.yaml"));
 
 const industry = config.business?.industry ?? "";
 const template = industry
@@ -38,7 +38,7 @@ export const business = {
 };
 
 export const agent = {
-  name: config.agent?.name ?? "Sofia",
+  name: config.agent?.name ?? "Daniela",
   language: config.agent?.language ?? "es-MX",
   personality: config.agent?.personality ?? "",
 };
